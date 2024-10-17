@@ -14,14 +14,15 @@
     "test:debug": "mocha -r ts-node/register --inspect-brk test/**/*.ts --exit"
   },
   "dependencies": {
+    "@azure/cosmos": "^4.1.1",
+    "@azure/identity": "^4.4.1",
     "body-parser": "^1.19.2",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
-    
     "express-openapi-validator": "^4.13.8",
-    
-    "pino": "^7.8.1"
+    "pino": "^7.8.1",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.0",
@@ -32,6 +33,7 @@
     "@types/pino": "^7.0.4",
     "@types/shelljs": "^0.8.11",
     "@types/supertest": "^2.0.11",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^5.14.0",
     "@typescript-eslint/parser": "^5.14.0",
     "chai": "^4.3.6",
