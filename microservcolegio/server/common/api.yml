@@ -11,6 +11,17 @@ tags:
 - name: Specification
   description: The swagger API specification
 paths:
+  /alunos:
+    get:
+      responses:
+        200:
+          description: Returns all
+          content: {}
+    post:
+      responses:
+          200:
+            description: Return all
+            content: {}          
   /examples:
     get:
       tags:
