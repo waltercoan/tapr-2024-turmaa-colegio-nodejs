@@ -78,3 +78,130 @@ npm install @azure/cosmos
 npm install @azure/identity
 ```
 
+### Correções 04/11/2024
+- Incluir as variáveis de ambiente dentro o arquivo .env na pasta microservcolegio
+```
+COSMOSDBURL=https://localhost:8081/
+COSMOSDBKEY=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+COSMOSDBDB=dbcolegio
+NODE_TLS_REJECT_UNAUTHORIZED = 0
+```
+
+## CRUD API REST
+- [Documentação oficial da API do CosmosDB para JS](https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/cosmosdb/cosmos#azure-cosmos-db-client-library-for-javascripttypescript)
+
+### Verbo GET e POST
+- Objetivo: Retornar uma lista de objetos ou um objeto específico a partir da chave, e salvar um novo aluno
+
+
+#### api.yml
+- Registrar os enpoints na documentação da API (dentro do item paths:)
+```
+  /alunos:
+    get:
+      responses:
+        200:
+          description: Returns all
+          content: {}
+    post:
+      responses:
+          200:
+            description: Return all
+            content: {} 
+```
+
+
+#### microservcolegio/server/api/secretaria/services/alunoservice.ts
+```
+import { Container, SqlQuerySpec } from "@azure/cosmos"
+import cosmosDb from "../../../common/cosmosdb"
+import { Aluno } from "../entities/aluno"
+
+
+class AlunoService{
+    private container:Container =
+        cosmosDb.container("aluno")
+
+    async all(): Promise<Aluno[]>{
+        const {resources: listaAlunos}
+            = await this.container.items.readAll<Aluno>().fetchAll()
+        return Promise.resolve(listaAlunos)
+    }
+    async saveNew(aluno:Aluno): Promise<Aluno>{
+        aluno.id = ""
+        await this.container.items.create(aluno);
+
+        return Promise.resolve(aluno);
+    }
+}
+
+
+export default new AlunoService();
+```
+
+#### controllers/alunos/alunocontroller.ts
+- Implememntar no controlador os métodos para buscar do banco todos os alunos e para salvar um novo aluno
+
+```
+import {Request, Response} from 'express';
+import AlunoService from '../../secretaria/services/alunoservice';
+
+
+class AlunoController{
+    all(_:Request, res:Response): void{
+        AlunoService.all().then((a) => res.json(a))
+    }
+    post(req:Request, res:Response): void{
+        if(req.body == undefined)
+            res.status(400).end()
+        AlunoService.saveNew(req.body).then((a) => res.json(a))
+    }
+}
+
+export default new AlunoController();
+```
+#### controllers/alunos/router.ts
+- Registrar os endpoints no mecanismo de rotas
+
+```
+import express from 'express';
+import controller from './alunocontroller';
+
+export default express
+    .Router()
+    .get('/', controller.all)
+    .post('/', controller.post)
+```
+
+### Registrar as rotas da API do Aluno no controlador de Rotas geral
+```
+import { Application } from 'express';
+import examplesRouter from './api/controllers/examples/router';
+import alunoRouter from './api/controllers/alunos/router'
+
+export default function routes(app: Application): void {
+  app.use('/api/v1/examples', examplesRouter);
+  app.use('/api/v1/alunos', alunoRouter)
+}
+```
+
+#### teste.rest
+- Implementação do teste do verbo GET e POST
+```
+### Buscar todos os alunos
+GET http://localhost:3000/api/v1/alunos
+
+### Inserir um aluno
+POST http://localhost:3000/api/v1/alunos
+Content-Type: application/json
+
+{
+    "nome" : "zezinho"
+}
+```
+
+## Excutar o projeto
+```
+npm run compile
+npm start
+```
