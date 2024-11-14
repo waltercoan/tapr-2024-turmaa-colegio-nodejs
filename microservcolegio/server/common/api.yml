@@ -22,6 +22,16 @@ paths:
           200:
             description: Return all
             content: {}          
+    put:
+      responses:
+          200:
+            description: Return all
+            content: {}                      
+    delete:
+      responses:
+          200:
+            description: Return all
+            content: {}                      
   /examples:
     get:
       tags:

@@ -1,7 +1,7 @@
 
 
 export interface Aluno{
-    id: string,
-    nome: string
+    id?: string,
+    nome?: string
 
 }

@@ -31,6 +31,7 @@ export class ExamplesService {
     examples.push(example);
     return Promise.resolve(example);
   }
+
 }
 
 export default new ExamplesService();
